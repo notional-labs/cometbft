@@ -3,6 +3,7 @@ package types
 import (
 	fmt "fmt"
 
+	"github.com/cometbft/cometbft/crypto/bn256"
 	"github.com/cometbft/cometbft/crypto/ed25519"
 	cryptoenc "github.com/cometbft/cometbft/crypto/encoding"
 	"github.com/cometbft/cometbft/crypto/secp256k1"
@@ -35,6 +36,16 @@ func UpdateValidator(pk []byte, power int64, keyType string) ValidatorUpdate {
 		}
 		return ValidatorUpdate{
 			// Address:
+			PubKey: pkp,
+			Power:  power,
+		}
+	case bn256.KeyType:
+		pke := bn256.PubKey(pk)
+		pkp, err := cryptoenc.PubKeyToProto(pke)
+		if err != nil {
+			panic(err)
+		}
+		return ValidatorUpdate{
 			PubKey: pkp,
 			Power:  power,
 		}
